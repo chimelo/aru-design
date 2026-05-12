@@ -138,6 +138,7 @@ input:focus, textarea:focus { outline: none; border-color: rgba(0,0,0,0.4); box-
     </div>
   </div>
 
+  <p style="font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 10px;">① カラーとデザインを決めてください</p>
   <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
     <div>
       <p class="section-label">背景カラー</p>
@@ -197,6 +198,29 @@ G H I</textarea>
       </div>
     </div>
     <div id="guest-list"></div>
+  </div>
+
+  <p style="font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 10px;">③ アンケート</p>
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">結婚式日付</p>
+    <input type="text" id="survey-date" placeholder="例: 2026年6月1日">
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">エスコートカードの活用方法</p>
+    <div style="display: flex; gap: 18px; flex-wrap: wrap;">
+      <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+        <input type="radio" name="survey-usage" value="受付で手渡し"> 受付で手渡し
+      </label>
+      <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+        <input type="radio" name="survey-usage" value="ウェルカムスペース展示"> ウェルカムスペース展示
+      </label>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">その他ご要望があればご記入ください</p>
+    <textarea id="survey-note" rows="4" style="font-family: inherit;" placeholder="自由記入"></textarea>
   </div>
 
   <div class="footer-row">
@@ -362,6 +386,7 @@ var GAS_API_URL = 'https://script.google.com/macros/s/PASTE_YOUR_GAS_URL_HERE/ex
     var btn = $('submit-btn'); btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> 送信中...';
 
+    var usageEl = document.querySelector('input[name="survey-usage"]:checked');
     var payload = {
       orderId: ORDER_ID,
       wedding: {
@@ -371,7 +396,12 @@ var GAS_API_URL = 'https://script.google.com/macros/s/PASTE_YOUR_GAS_URL_HERE/ex
         fontSize: state.fontSize,
         seatLayout: state.seatLayout
       },
-      guests: state.guests.filter(function(g){ return g.l1 || g.l2; })
+      guests: state.guests.filter(function(g){ return g.l1 || g.l2; }),
+      survey: {
+        weddingDate: $('survey-date').value,
+        usage: usageEl ? usageEl.value : '',
+        note: $('survey-note').value
+      }
     };
 
     // 注意: text/plain で送ることで CORS preflight を回避
@@ -416,6 +446,14 @@ var GAS_API_URL = 'https://script.google.com/macros/s/PASTE_YOUR_GAS_URL_HERE/ex
             if (w.seatLayout) {
               state.seatLayout = w.seatLayout;
               $('seat-input').value = w.seatLayout;
+            }
+          }
+          if (data.survey) {
+            if (data.survey.weddingDate) $('survey-date').value = data.survey.weddingDate;
+            if (data.survey.note) $('survey-note').value = data.survey.note;
+            if (data.survey.usage) {
+              var r = document.querySelector('input[name="survey-usage"][value="' + data.survey.usage + '"]');
+              if (r) r.checked = true;
             }
           }
           state.currentIdx = 0;
