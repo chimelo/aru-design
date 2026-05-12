@@ -196,9 +196,31 @@ G H I</textarea>
         <span style="font-size: 12px; min-width: 50px; text-align: center; align-self: center;"><span id="cur-idx">1</span> / <span id="total">0</span></span>
         <button id="next-btn" style="padding: 0 8px;"><i class="ti ti-chevron-right"></i></button>
         <button id="add-btn" style="padding: 0 8px;"><i class="ti ti-plus"></i> 1名追加</button>
+        <button id="bulk-btn" style="padding: 0 8px;"><i class="ti ti-list"></i> 一括登録</button>
       </div>
     </div>
     <div id="guest-list"></div>
+  </div>
+
+  <div id="bulk-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1100; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:var(--card); border-radius:var(--radius-lg); padding:20px 22px; max-width:560px; width:100%; max-height:90vh; overflow:auto;">
+      <h3 style="margin:0 0 10px; font-size:16px; font-weight:500;">ゲストを一括登録</h3>
+      <p style="font-size:12px; color:var(--text-muted); margin:0 0 12px;">既存ゲストの末尾に追加されます。「1行目, 2行目, 席」のカンマ区切り（タブ・スペース区切りも可）。改行で複数名。</p>
+
+      <p class="section-label" style="margin-top:8px;">テキストを貼り付け</p>
+      <textarea id="bulk-text" rows="8" style="font-family: var(--font-mono);" placeholder="MANAMI, KOBAYASHI, F&#10;小林まなみ 様, , D&#10;YUKI, SATO, A"></textarea>
+
+      <p class="section-label" style="margin-top:14px;">または CSV ファイルを選択</p>
+      <input type="file" id="bulk-file" accept=".csv,.tsv,.txt" style="font-size:12px;">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:16px; padding-top:12px; border-top:0.5px solid var(--border);">
+        <span id="bulk-preview-count" style="font-size:12px; color:var(--text-muted);"></span>
+        <div style="display:flex; gap:8px;">
+          <button id="bulk-cancel">キャンセル</button>
+          <button id="bulk-apply" class="btn-primary"><i class="ti ti-check"></i> 追加</button>
+        </div>
+      </div>
+    </div>
   </div>
 
   <p style="font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 10px;">③ アンケート</p>
@@ -366,6 +388,60 @@ var GAS_API_URL = 'https://script.google.com/macros/s/PASTE_YOUR_GAS_URL_HERE/ex
   $('prev-btn').addEventListener('click', function(){ if (state.guests.length === 0) return; setCurrent((state.currentIdx - 1 + state.guests.length) % state.guests.length); });
   $('next-btn').addEventListener('click', function(){ if (state.guests.length === 0) return; setCurrent((state.currentIdx + 1) % state.guests.length); });
   $('add-btn').addEventListener('click', function(){ state.guests.push({ l1: '', l2: '', seat: '' }); setCurrent(state.guests.length - 1); renderList(); });
+
+  // 一括登録: テキスト/CSV を解析してゲスト配列を返す
+  function parseBulkInput(text) {
+    if (!text) return [];
+    return text.split(/\r?\n/).map(function(line){
+      var t = line.trim();
+      if (!t) return null;
+      // カンマ / タブ / 2つ以上の連続スペース で区切る
+      var parts = t.split(/\s*,\s*|\t|\s{2,}/);
+      return {
+        l1:   (parts[0] || '').trim(),
+        l2:   (parts[1] || '').trim(),
+        seat: (parts[2] || '').trim()
+      };
+    }).filter(function(g){ return g && (g.l1 || g.l2); });
+  }
+
+  function updateBulkPreview() {
+    var n = parseBulkInput($('bulk-text').value).length;
+    $('bulk-preview-count').textContent = n > 0 ? n + '名分を解析' : '';
+  }
+
+  function openBulkModal() {
+    $('bulk-text').value = '';
+    $('bulk-file').value = '';
+    $('bulk-preview-count').textContent = '';
+    $('bulk-modal').style.display = 'flex';
+  }
+  function closeBulkModal() { $('bulk-modal').style.display = 'none'; }
+
+  $('bulk-btn').addEventListener('click', openBulkModal);
+  $('bulk-cancel').addEventListener('click', closeBulkModal);
+  $('bulk-modal').addEventListener('click', function(e){
+    if (e.target === $('bulk-modal')) closeBulkModal();
+  });
+  $('bulk-text').addEventListener('input', updateBulkPreview);
+  $('bulk-file').addEventListener('change', function(){
+    var f = $('bulk-file').files[0]; if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      $('bulk-text').value = String(reader.result || '');
+      updateBulkPreview();
+    };
+    reader.readAsText(f);
+  });
+  $('bulk-apply').addEventListener('click', function(){
+    var added = parseBulkInput($('bulk-text').value);
+    if (added.length === 0) { showError('登録できる行がありません'); closeBulkModal(); return; }
+    state.guests = state.guests.concat(added);
+    setCurrent(state.guests.length - added.length);
+    renderList();
+    closeBulkModal();
+    showSuccess(added.length + '名を追加しました');
+  });
 
   function showSuccess(msg) {
     $('error-banner').classList.remove('show');
