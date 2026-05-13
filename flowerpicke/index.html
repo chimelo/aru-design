@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ブーケエスコートカード カスタマイズ - ARU design office</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.0.0/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cormorant-garamond@5.0.0/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.0.0/dist/tabler-icons.min.css">
+<style>
+:root {
+  --bg: #fafaf7; --card: #ffffff; --surface: #f5f4ef;
+  --text: #1a1a1a; --text-muted: #6b6b6b; --text-faint: #999;
+  --border: rgba(0,0,0,0.1); --border-strong: rgba(0,0,0,0.2);
+  --info-bg: #e6f1fb; --info-text: #0c447c;
+  --success-bg: #e1f5ee; --success-text: #0d6e4a;
+  --danger-bg: #fce0e0; --danger-text: #a32d2d;
+  --radius-md: 8px; --radius-lg: 12px;
+  --font-mono: 'Menlo', 'Consolas', monospace;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  background: var(--bg); color: var(--text); margin: 0; padding: 24px 16px; font-size: 14px; line-height: 1.6;
+}
+.container { max-width: 720px; margin: 0 auto; background: var(--card); border-radius: var(--radius-lg); padding: 24px 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+h1 { font-size: 18px; margin: 0 0 4px; font-weight: 500; }
+.subtitle { font-size: 13px; color: var(--text-muted); margin: 0 0 16px; }
+.order-badge { display: inline-block; font-family: var(--font-mono); font-size: 11px; background: var(--surface); padding: 2px 8px; border-radius: 4px; color: var(--text-muted); margin-left: 8px; vertical-align: middle; }
+button { height: 34px; padding: 0 12px; background: transparent; border: 0.5px solid var(--border-strong); border-radius: var(--radius-md); cursor: pointer; font-size: 13px; font-family: inherit; color: var(--text); display: inline-flex; align-items: center; gap: 6px; }
+button:hover { background: var(--surface); }
+button:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--text); color: var(--card); border-color: var(--text); }
+.btn-primary:hover:not(:disabled) { background: #333; }
+input[type="text"], textarea { padding: 0 10px; border: 0.5px solid var(--border); border-radius: var(--radius-md); font-family: inherit; font-size: 13px; background: white; color: var(--text); width: 100%; }
+input[type="text"] { height: 34px; }
+textarea { padding: 8px 10px; resize: vertical; font-family: var(--font-mono); font-size: 13px; min-height: 80px; }
+input:focus, textarea:focus { outline: none; border-color: rgba(0,0,0,0.4); box-shadow: 0 0 0 3px rgba(0,0,0,0.05); }
+
+.bc-card { font-family: 'Cormorant Garamond', 'Times New Roman', 'Yu Mincho', serif; color: #4a4a4a; --card-bg: #cce4f1; }
+.bc-card .bc-left { background: var(--card-bg); }
+.preview-wrap { background: var(--surface); border-radius: var(--radius-lg); padding: 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; }
+.cp-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; padding: 0; }
+.cp-btn.active { border-color: var(--text); }
+.section-label { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; margin: 0 0 8px; font-weight: 500; }
+
+.guest-row { display: grid; grid-template-columns: 28px 1fr 1fr 70px 32px; gap: 6px; align-items: center; padding: 3px 4px; border-radius: var(--radius-md); cursor: pointer; }
+.guest-row:hover { background: var(--surface); }
+.guest-row.active { background: var(--info-bg); }
+.guest-row .gx { font-size: 11px; color: var(--text-muted); text-align: center; }
+.guest-row input { font-size: 12px; height: 28px; padding: 0 8px; }
+.guest-del { background: transparent; border: none; color: var(--text-faint); cursor: pointer; font-size: 14px; border-radius: var(--radius-md); width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; }
+.guest-del:hover { color: var(--danger-text); background: var(--danger-bg); }
+.hint { font-size: 11px; color: var(--text-faint); margin-top: 4px; }
+
+.banner { display: none; padding: 10px 14px; border-radius: var(--radius-md); margin-top: 12px; font-size: 13px; align-items: center; gap: 8px; }
+.banner.show { display: flex; }
+.banner.success { background: var(--success-bg); color: var(--success-text); }
+.banner.danger { background: var(--danger-bg); color: var(--danger-text); }
+.footer-row { display: flex; justify-content: space-between; align-items: center; padding-top: 14px; border-top: 0.5px solid var(--border); gap: 12px; flex-wrap: wrap; }
+.footer-info { font-size: 12px; color: var(--text-muted); }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.85); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.loading-overlay.hidden { display: none; }
+
+@media (max-width: 600px) {
+  body { padding: 0; }
+  .container { padding: 16px; border-radius: 0; box-shadow: none; }
+  .guest-row { grid-template-columns: 24px 1fr 60px 28px; gap: 4px; }
+  .guest-row input:nth-child(3) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="loading" class="loading-overlay">
+  <span class="spinner" style="color: var(--text-muted); width: 24px; height: 24px;"></span>
+</div>
+
+<div class="container">
+  <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 4px;">
+    <img src="logo.png" alt="ARU design office" style="height: 40px; width: auto;">
+    <h1 style="margin: 0;">
+      ブーケエスコートカード カスタマイズ
+      <span class="order-badge" id="order-badge" style="display:none;"></span>
+    </h1>
+  </div>
+  <p class="subtitle">ボタニカル アーチ デザイン - 席札</p>
+
+  <div class="preview-wrap">
+    <div class="bc-card" id="card" style="width: 100%; max-width: 640px; aspect-ratio: 1.63/1; background: #fdf8ec; box-shadow: 0 0 0 0.5px #ccc; position: relative; overflow: hidden; display: flex;">
+      <div class="bc-left" style="width: 45%; height: 100%; position: relative; padding: 4% 3%;">
+        <svg viewBox="0 0 280 80" preserveAspectRatio="xMidYMid meet" style="width: 100%; height: 20%; display: block;">
+          <defs><path id="archpath" d="M 18,72 Q 140,4 262,72" fill="none"/></defs>
+          <text id="coupletext" font-family="'Cormorant Garamond', serif" font-size="24" letter-spacing="0.18em" fill="#4a4a4a">
+            <textPath href="#archpath" startOffset="50%" text-anchor="middle">HARUTO &amp; SANA</textPath>
+          </text>
+        </svg>
+        <div style="position: relative; width: 70%; height: 60%; margin: 2% auto 0;">
+          <svg viewBox="0 0 200 270" preserveAspectRatio="xMidYMid meet" style="position:absolute; inset:0; width:100%; height:100%;">
+            <path d="M 14,260 L 14,90 Q 14,14 100,14 Q 186,14 186,90 L 186,260 Z" fill="#fdfdfb" stroke="#bfbfbf" stroke-width="0.6"/>
+            <line x1="20" y1="80" x2="20" y2="260" stroke="#bfbfbf" stroke-width="0.5"/>
+            <line x1="180" y1="80" x2="180" y2="260" stroke="#bfbfbf" stroke-width="0.5"/>
+          </svg>
+          <div style="position:absolute; inset:8% 12% 6% 12%; display:flex; align-items:flex-end; justify-content:center;">
+            <img id="bouquet-img" src="bouquet/pink.png" alt="ブーケ" style="width: 100%; height: 100%; object-fit: contain;"/>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:3%; font-size: clamp(10px, 2.4vw, 17px); letter-spacing: 0.32em; line-height: 1.5; color: #4a4a4a;">
+          <div>WEDDING</div><div>RECEPTION</div>
+        </div>
+      </div>
+      <div style="width: 55%; height: 100%; position: relative; padding: 5% 4%;">
+        <div style="font-size: clamp(13px, 2.6vw, 20px); letter-spacing: 0.15em; color: #4a4a4a;">Welcome</div>
+        <div style="margin-top: 8%; line-height: 1.15; color: #4a4a4a; font-weight: 500;">
+          <div id="namel1" style="letter-spacing: 0.08em;">MANAMI</div>
+          <div id="namel2" style="letter-spacing: 0.08em;">KOBAYASHI</div>
+        </div>
+        <div style="position: absolute; bottom: 4%; left: 4%; right: 4%; display: flex; align-items: flex-end; gap: 4%;">
+          <div style="flex: 1; text-align: center;">
+            <svg viewBox="0 0 140 32" style="width: 80%; max-width: 110px; display: block; margin: 0 auto;">
+              <defs><path id="ytpath" d="M 6,28 Q 70,2 134,28" fill="none"/></defs>
+              <text font-family="'Cormorant Garamond', serif" font-size="20" letter-spacing="0.15em" fill="#4a4a4a">
+                <textPath href="#ytpath" startOffset="50%" text-anchor="middle">Your table is</textPath>
+              </text>
+            </svg>
+            <div id="bigletter" style="font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(64px, 18vw, 135px); line-height: 1; color: #4a4a4a;">F</div>
+          </div>
+          <div style="flex: 1.1;">
+            <div style="display: flex; justify-content: space-around; font-size: clamp(8px, 1.5vw, 12px); letter-spacing: 0.15em; margin-bottom: 4%;">
+              <span>GROOM</span><span>BRIDE</span>
+            </div>
+            <div id="seatchart" style="font-family: 'Cormorant Garamond', serif; font-size: clamp(13px, 3vw, 22px); color: #4a4a4a; text-align: center; line-height: 1.6;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 10px;">① カラーとデザインを決めてください</p>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px;">
+    <div>
+      <p class="section-label">背景カラー</p>
+      <div style="display:flex; gap:8px;">
+        <button class="cp-btn active" data-bg="#cce4f1" style="background:#cce4f1" aria-label="ブルー"></button>
+        <button class="cp-btn" data-bg="#f5d4d4" style="background:#f5d4d4" aria-label="ピンク"></button>
+        <button class="cp-btn" data-bg="#fbe88a" style="background:#fbe88a" aria-label="イエロー"></button>
+        <button class="cp-btn" data-bg="#dfc8f0" style="background:#dfc8f0" aria-label="パープル"></button>
+      </div>
+    </div>
+    <div>
+      <p class="section-label">ブーケカラー</p>
+      <div style="display:flex; gap:8px;">
+        <button class="cp-btn active" data-bouquet="pink" style="background:#e8a5a8" aria-label="ピンク"></button>
+        <button class="cp-btn" data-bouquet="blue" style="background:#a5c4e0" aria-label="ブルー"></button>
+        <button class="cp-btn" data-bouquet="yellow" style="background:#ecd180" aria-label="イエロー"></button>
+        <button class="cp-btn" data-bouquet="purple" style="background:#c5a8d8" aria-label="パープル"></button>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">新郎新婦名 (アーチに表示)</p>
+    <input type="text" id="couple-in" value="HARUTO & SANA">
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">現在表示中のゲスト名</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 100px; gap: 10px; margin-bottom: 8px;">
+      <input type="text" id="cur-l1" placeholder="1行目 (例: MANAMI または 小林まなみ 様)">
+      <input type="text" id="cur-l2" placeholder="2行目 (空欄なら1行表示)">
+      <input type="text" id="cur-seat" placeholder="席" maxlength="3" style="text-align:center;">
+    </div>
+    <div style="display: flex; gap: 12px; align-items: center;">
+      <span style="font-size: 12px; color: var(--text-muted);">サイズ</span>
+      <input type="range" id="size-slider" min="70" max="130" value="100" step="5" style="width: 120px;">
+      <span id="size-out" style="font-size: 12px; color: var(--text-muted);">100%</span>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">シートチャート (改行で行わけ・スペースで横並び)</p>
+    <textarea id="seat-input" rows="4">A B C
+D E F
+G H I</textarea>
+    <div class="hint">改行で行ごとに入力。選択中ゲストの席に♡が自動表示されます。</div>
+  </div>
+
+  <p style="font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 10px;">② ゲストリスト</p>
+  <div style="margin-bottom: 14px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <p class="section-label" style="margin: 0;">ゲスト一覧</p>
+      <div style="display: flex; gap: 6px;">
+        <button id="prev-btn" style="padding: 0 8px;"><i class="ti ti-chevron-left"></i></button>
+        <span style="font-size: 12px; min-width: 50px; text-align: center; align-self: center;"><span id="cur-idx">1</span> / <span id="total">0</span></span>
+        <button id="next-btn" style="padding: 0 8px;"><i class="ti ti-chevron-right"></i></button>
+        <button id="add-btn" style="padding: 0 8px;"><i class="ti ti-plus"></i> 1名追加</button>
+        <button id="bulk-btn" style="padding: 0 8px;"><i class="ti ti-list"></i> 一括登録</button>
+      </div>
+    </div>
+    <div id="guest-list"></div>
+  </div>
+
+  <div id="bulk-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.45); z-index:1100; align-items:center; justify-content:center; padding:16px;">
+    <div style="background:var(--card); border-radius:var(--radius-lg); padding:20px 22px; max-width:560px; width:100%; max-height:90vh; overflow:auto;">
+      <h3 style="margin:0 0 10px; font-size:16px; font-weight:500;">ゲストを一括登録</h3>
+      <p style="font-size:12px; color:var(--text-muted); margin:0 0 12px;">既存ゲストの末尾に追加されます。「1行目, 2行目, 席」のカンマ区切り（タブ・スペース区切りも可）。改行で複数名。</p>
+
+      <p class="section-label" style="margin-top:8px;">テキストを貼り付け</p>
+      <textarea id="bulk-text" rows="8" style="font-family: var(--font-mono);" placeholder="MANAMI, KOBAYASHI, F&#10;小林まなみ 様, , D&#10;YUKI, SATO, A"></textarea>
+
+      <p class="section-label" style="margin-top:14px;">または CSV ファイルを選択</p>
+      <input type="file" id="bulk-file" accept=".csv,.tsv,.txt" style="font-size:12px;">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:16px; padding-top:12px; border-top:0.5px solid var(--border);">
+        <span id="bulk-preview-count" style="font-size:12px; color:var(--text-muted);"></span>
+        <div style="display:flex; gap:8px;">
+          <button id="bulk-cancel">キャンセル</button>
+          <button id="bulk-apply" class="btn-primary"><i class="ti ti-check"></i> 追加</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="font-size: 14px; font-weight: 600; color: var(--text); margin: 18px 0 10px;">③ アンケート</p>
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">結婚式日付</p>
+    <input type="text" id="survey-date" placeholder="例: 2026年6月1日">
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">エスコートカードの活用方法</p>
+    <div style="display: flex; gap: 18px; flex-wrap: wrap;">
+      <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+        <input type="radio" name="survey-usage" value="受付で手渡し"> 受付で手渡し
+      </label>
+      <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer;">
+        <input type="radio" name="survey-usage" value="ウェルカムスペース展示"> ウェルカムスペース展示
+      </label>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p class="section-label">その他ご要望があればご記入ください</p>
+    <textarea id="survey-note" rows="4" style="font-family: inherit;" placeholder="自由記入"></textarea>
+  </div>
+
+  <div class="footer-row">
+    <span class="footer-info">合計 <span id="footer-count">0</span> 名 / サンプル確認後に印刷データを作成します</span>
+    <button class="btn-primary" id="submit-btn"><i class="ti ti-check"></i> 内容を送信</button>
+  </div>
+
+  <div class="banner success" id="success-banner">
+    <i class="ti ti-circle-check"></i><span id="success-msg"></span>
+  </div>
+  <div class="banner danger" id="error-banner">
+    <i class="ti ti-alert-circle"></i><span id="error-msg"></span>
+  </div>
+</div>
+
+<script>
+// ====================================================================
+// CONFIG - GAS Web App のデプロイURLをここに貼り付け
+// ====================================================================
+var GAS_API_URL = 'https://script.google.com/macros/s/PASTE_YOUR_GAS_URL_HERE/exec';
+// ====================================================================
+
+(function(){
+  // URL パラメータから orderId を取得
+  var params = new URLSearchParams(window.location.search);
+  var ORDER_ID = params.get('orderId') || '';
+
+  var state = {
+    bgColor: '#cce4f1',
+    bouquetColor: 'pink',
+    couple: 'HARUTO & SANA',
+    fontSize: 100,
+    seatLayout: 'A B C\nD E F\nG H I',
+    guests: [
+      { l1: 'MANAMI', l2: 'KOBAYASHI', seat: 'F' },
+      { l1: '小林まなみ 様', l2: '', seat: 'D' },
+      { l1: 'YUKI', l2: 'SATO', seat: 'A' }
+    ],
+    currentIdx: 0
+  };
+
+  function $(id){ return document.getElementById(id); }
+  function $$(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); }
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function renderPreview() {
+    $('card').style.setProperty('--card-bg', state.bgColor);
+    $('bouquet-img').src = 'bouquet/' + state.bouquetColor + '.png';
+    $('coupletext').querySelector('textPath').textContent = state.couple || ' ';
+    var g = state.guests[state.currentIdx] || { l1: '', l2: '', seat: '' };
+    var l1 = g.l1 || ' ', l2 = g.l2 || '';
+    var scale = state.fontSize / 100;
+    var fontSize = l2
+      ? 'clamp(' + (18.2 * scale) + 'px, ' + (4.94 * scale) + 'vw, ' + (36.4 * scale) + 'px)'
+      : 'clamp(' + (18.2 * scale) + 'px, ' + (4.42 * scale) + 'vw, ' + (33.8 * scale) + 'px)';
+    $('namel1').textContent = l1; $('namel1').style.fontSize = fontSize;
+    $('namel2').textContent = l2; $('namel2').style.fontSize = fontSize;
+    $('namel2').style.display = l2 ? '' : 'none';
+    $('bigletter').textContent = g.seat || ' ';
+    var rows = state.seatLayout.split('\n').map(function(r){ return r.split(/\s+/).filter(Boolean); });
+    $('seatchart').innerHTML = rows.map(function(row){
+      return '<div style="display: flex; justify-content: center; gap: 8%;">' + row.map(function(L){ return cell(L, g.seat); }).join('') + '</div>';
+    }).join('');
+    $('cur-idx').textContent = state.guests.length === 0 ? 0 : (state.currentIdx + 1);
+    $('total').textContent = state.guests.length;
+    $('footer-count').textContent = state.guests.length;
+  }
+
+  function cell(letter, selected) {
+    if (letter === selected) {
+      return '<span style="position:relative; display:inline-flex; align-items:center; justify-content:center; width:1.7em; height:1.7em;">'
+        + '<svg viewBox="0 0 24 24" style="position:absolute; inset:0; width:100%; height:100%;" fill="none" stroke="#4a4a4a" stroke-width="1.2">'
+        + '<path d="M 12,21 C 12,21 3,15 3,9 C 3,6 5,4 8,4 C 10,4 11.5,5 12,6.5 C 12.5,5 14,4 16,4 C 19,4 21,6 21,9 C 21,15 12,21 12,21 Z"/></svg>'
+        + '<span style="position:relative; z-index:1; font-size:0.85em;">' + esc(letter) + '</span></span>';
+    }
+    return '<span style="display: inline-flex; align-items: center; justify-content: center; width: 1.7em; height: 1.7em;">' + esc(letter) + '</span>';
+  }
+
+  function renderEditFields() {
+    var g = state.guests[state.currentIdx] || { l1: '', l2: '', seat: '' };
+    $('cur-l1').value = g.l1 || ''; $('cur-l2').value = g.l2 || ''; $('cur-seat').value = g.seat || '';
+  }
+
+  function renderList() {
+    var list = $('guest-list'); list.innerHTML = '';
+    state.guests.forEach(function(g, i){
+      var row = document.createElement('div');
+      row.className = 'guest-row' + (i === state.currentIdx ? ' active' : '');
+      var idx = document.createElement('span'); idx.className = 'gx'; idx.textContent = i + 1; row.appendChild(idx);
+      var l1 = document.createElement('input'); l1.type = 'text'; l1.value = g.l1; l1.placeholder = '1行目';
+      l1.addEventListener('input', function(){ state.guests[i].l1 = l1.value; if (i === state.currentIdx) { renderPreview(); $('cur-l1').value = l1.value; } });
+      l1.addEventListener('focus', function(){ setCurrent(i); }); row.appendChild(l1);
+      var l2 = document.createElement('input'); l2.type = 'text'; l2.value = g.l2; l2.placeholder = '2行目';
+      l2.addEventListener('input', function(){ state.guests[i].l2 = l2.value; if (i === state.currentIdx) { renderPreview(); $('cur-l2').value = l2.value; } });
+      l2.addEventListener('focus', function(){ setCurrent(i); }); row.appendChild(l2);
+      var seat = document.createElement('input'); seat.type = 'text'; seat.value = g.seat; seat.placeholder = '席'; seat.maxLength = 3; seat.style.textAlign = 'center';
+      seat.addEventListener('input', function(){ state.guests[i].seat = seat.value; if (i === state.currentIdx) { renderPreview(); $('cur-seat').value = seat.value; } });
+      seat.addEventListener('focus', function(){ setCurrent(i); }); row.appendChild(seat);
+      var del = document.createElement('button'); del.className = 'guest-del'; del.innerHTML = '<i class="ti ti-x"></i>';
+      del.addEventListener('click', function(e){ e.stopPropagation(); state.guests.splice(i, 1);
+        if (state.currentIdx >= state.guests.length) state.currentIdx = Math.max(0, state.guests.length - 1);
+        renderList(); renderEditFields(); renderPreview();
+      });
+      row.appendChild(del);
+      row.addEventListener('click', function(e){
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'BUTTON' || e.target.tagName === 'I') return;
+        setCurrent(i);
+      });
+      list.appendChild(row);
+    });
+  }
+
+  function setCurrent(i) {
+    state.currentIdx = i;
+    $$('.guest-row').forEach(function(r, idx){ r.classList.toggle('active', idx === i); });
+    renderEditFields(); renderPreview();
+  }
+  function setBgColor(c) {
+    state.bgColor = c;
+    $$('.cp-btn[data-bg]').forEach(function(b){ b.classList.toggle('active', b.dataset.bg === c); });
+  }
+  function setBouquetColor(c) {
+    state.bouquetColor = c;
+    $$('.cp-btn[data-bouquet]').forEach(function(b){ b.classList.toggle('active', b.dataset.bouquet === c); });
+  }
+
+  $$('.cp-btn[data-bg]').forEach(function(b){
+    b.addEventListener('click', function(){ setBgColor(b.dataset.bg); renderPreview(); });
+  });
+  $$('.cp-btn[data-bouquet]').forEach(function(b){
+    b.addEventListener('click', function(){ setBouquetColor(b.dataset.bouquet); renderPreview(); });
+  });
+  $('couple-in').addEventListener('input', function(){ state.couple = $('couple-in').value; renderPreview(); });
+  $('cur-l1').addEventListener('input', function(){ state.guests[state.currentIdx].l1 = $('cur-l1').value; renderList(); renderPreview(); });
+  $('cur-l2').addEventListener('input', function(){ state.guests[state.currentIdx].l2 = $('cur-l2').value; renderList(); renderPreview(); });
+  $('cur-seat').addEventListener('input', function(){ state.guests[state.currentIdx].seat = $('cur-seat').value; renderList(); renderPreview(); });
+  $('size-slider').addEventListener('input', function(){
+    state.fontSize = parseInt($('size-slider').value);
+    $('size-out').textContent = state.fontSize + '%'; renderPreview();
+  });
+  $('seat-input').addEventListener('input', function(){ state.seatLayout = $('seat-input').value; renderPreview(); });
+  $('prev-btn').addEventListener('click', function(){ if (state.guests.length === 0) return; setCurrent((state.currentIdx - 1 + state.guests.length) % state.guests.length); });
+  $('next-btn').addEventListener('click', function(){ if (state.guests.length === 0) return; setCurrent((state.currentIdx + 1) % state.guests.length); });
+  $('add-btn').addEventListener('click', function(){ state.guests.push({ l1: '', l2: '', seat: '' }); setCurrent(state.guests.length - 1); renderList(); });
+
+  // 一括登録: テキスト/CSV を解析してゲスト配列を返す
+  function parseBulkInput(text) {
+    if (!text) return [];
+    return text.split(/\r?\n/).map(function(line){
+      var t = line.trim();
+      if (!t) return null;
+      // カンマ / タブ / 2つ以上の連続スペース で区切る
+      var parts = t.split(/\s*,\s*|\t|\s{2,}/);
+      return {
+        l1:   (parts[0] || '').trim(),
+        l2:   (parts[1] || '').trim(),
+        seat: (parts[2] || '').trim()
+      };
+    }).filter(function(g){ return g && (g.l1 || g.l2); });
+  }
+
+  function updateBulkPreview() {
+    var n = parseBulkInput($('bulk-text').value).length;
+    $('bulk-preview-count').textContent = n > 0 ? n + '名分を解析' : '';
+  }
+
+  function openBulkModal() {
+    $('bulk-text').value = '';
+    $('bulk-file').value = '';
+    $('bulk-preview-count').textContent = '';
+    $('bulk-modal').style.display = 'flex';
+  }
+  function closeBulkModal() { $('bulk-modal').style.display = 'none'; }
+
+  $('bulk-btn').addEventListener('click', openBulkModal);
+  $('bulk-cancel').addEventListener('click', closeBulkModal);
+  $('bulk-modal').addEventListener('click', function(e){
+    if (e.target === $('bulk-modal')) closeBulkModal();
+  });
+  $('bulk-text').addEventListener('input', updateBulkPreview);
+  $('bulk-file').addEventListener('change', function(){
+    var f = $('bulk-file').files[0]; if (!f) return;
+    var reader = new FileReader();
+    reader.onload = function(){
+      $('bulk-text').value = String(reader.result || '');
+      updateBulkPreview();
+    };
+    reader.readAsText(f);
+  });
+  $('bulk-apply').addEventListener('click', function(){
+    var added = parseBulkInput($('bulk-text').value);
+    if (added.length === 0) { showError('登録できる行がありません'); closeBulkModal(); return; }
+    state.guests = state.guests.concat(added);
+    setCurrent(state.guests.length - added.length);
+    renderList();
+    closeBulkModal();
+    showSuccess(added.length + '名を追加しました');
+  });
+
+  function showSuccess(msg) {
+    $('error-banner').classList.remove('show');
+    $('success-msg').textContent = msg; $('success-banner').classList.add('show');
+    $('success-banner').scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+  function showError(msg) {
+    $('success-banner').classList.remove('show');
+    $('error-msg').textContent = msg; $('error-banner').classList.add('show');
+    $('error-banner').scrollIntoView({ behavior: 'smooth', block: 'end' });
+  }
+
+  // 送信 (fetch POST → GAS Web App)
+  $('submit-btn').addEventListener('click', function(){
+    if (state.guests.length === 0) { showError('ゲストを1名以上追加してください'); return; }
+    if (!ORDER_ID) { showError('注文IDがURLに含まれていません。URLの末尾に ?orderId=XXX を付けてアクセスしてください'); return; }
+    if (GAS_API_URL.indexOf('PASTE_YOUR_GAS_URL_HERE') !== -1) { showError('GAS_API_URL が設定されていません。index.html を編集してください'); return; }
+
+    var btn = $('submit-btn'); btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> 送信中...';
+
+    var usageEl = document.querySelector('input[name="survey-usage"]:checked');
+    var payload = {
+      orderId: ORDER_ID,
+      wedding: {
+        couple: state.couple,
+        bgColor: state.bgColor,
+        bouquetColor: state.bouquetColor,
+        fontSize: state.fontSize,
+        seatLayout: state.seatLayout
+      },
+      guests: state.guests.filter(function(g){ return g.l1 || g.l2; }),
+      survey: {
+        weddingDate: $('survey-date').value,
+        usage: usageEl ? usageEl.value : '',
+        note: $('survey-note').value
+      }
+    };
+
+    // 注意: text/plain で送ることで CORS preflight を回避
+    fetch(GAS_API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(result){
+      btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> 内容を送信';
+      if (result && result.ok) showSuccess(result.guestCount + '名分の情報を送信しました。サンプル確認後にご連絡します。');
+      else showError((result && result.error) || '送信に失敗しました');
+    })
+    .catch(function(err){
+      btn.disabled = false; btn.innerHTML = '<i class="ti ti-check"></i> 内容を送信';
+      showError('通信エラー: ' + err.message);
+    });
+  });
+
+  // 既存データ読込 (GET)
+  function loadExistingOrder() {
+    if (!ORDER_ID || GAS_API_URL.indexOf('PASTE_YOUR_GAS_URL_HERE') !== -1) {
+      $('loading').classList.add('hidden');
+      return Promise.resolve();
+    }
+    return fetch(GAS_API_URL + '?orderId=' + encodeURIComponent(ORDER_ID))
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if (data && data.guests && data.guests.length > 0) {
+          state.guests = data.guests;
+          if (data.wedding) {
+            var w = data.wedding;
+            if (w.couple) { state.couple = w.couple; $('couple-in').value = w.couple; }
+            if (w.bgColor) setBgColor(w.bgColor);
+            if (w.bouquetColor) setBouquetColor(w.bouquetColor);
+            if (w.fontSize) {
+              state.fontSize = w.fontSize;
+              $('size-slider').value = w.fontSize;
+              $('size-out').textContent = w.fontSize + '%';
+            }
+            if (w.seatLayout) {
+              state.seatLayout = w.seatLayout;
+              $('seat-input').value = w.seatLayout;
+            }
+          }
+          if (data.survey) {
+            if (data.survey.weddingDate) $('survey-date').value = data.survey.weddingDate;
+            if (data.survey.note) $('survey-note').value = data.survey.note;
+            if (data.survey.usage) {
+              var r = document.querySelector('input[name="survey-usage"][value="' + data.survey.usage + '"]');
+              if (r) r.checked = true;
+            }
+          }
+          state.currentIdx = 0;
+        }
+      })
+      .catch(function(err){
+        console.warn('既存データ読込失敗 (新規注文として続行):', err);
+      })
+      .finally(function(){
+        $('loading').classList.add('hidden');
+      });
+  }
+
+  // 初期化
+  if (ORDER_ID) {
+    $('order-badge').textContent = ORDER_ID;
+    $('order-badge').style.display = '';
+  }
+  loadExistingOrder().then(function(){
+    renderList(); renderEditFields(); renderPreview();
+  });
+})();
+</script>
+</body>
+</html>
